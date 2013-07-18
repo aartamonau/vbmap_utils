@@ -22,6 +22,14 @@ def imbalance(vbmap):
 def average(items):
     return sum(items) / len(items)
 
+PERCENTILES = [20, 40, 60, 70, 80, 90, 95, 100]
+
+def percentiles(items):
+    n = len(items)
+    items = sorted(items)
+
+    return [items[int(round(p * n / 100.0)) - 1] for p in PERCENTILES]
+
 def main():
     paths = sys.argv[1:]
 
@@ -35,16 +43,20 @@ def main():
             stats.setdefault(i, []).append(imbalance(vbmap))
 
     x = sorted(stats.keys())
-    y = [average(stats[i]) for i in x]
 
     pylab.figure()
     pylab.xticks(x)
     pylab.title("Average imbalance after failovers")
     pylab.xlabel("Number of failed over nodes")
     pylab.ylabel("Average maximum imbalance")
-    pylab.legend()
 
-    pylab.plot(x, y)
+    percentiles_plots = zip(*[percentiles(stats[i]) for i in x])
+
+    for p, plot in zip(PERCENTILES, percentiles_plots):
+        pylab.plot(x, plot, label='%dth percentile' % p)
+    pylab.plot(x, [average(stats[i]) for i in x], linewidth=3, label='average')
+
+    pylab.legend()
 
     pylab.show()
 
