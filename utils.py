@@ -29,7 +29,7 @@ def promote_replicas(vbmap, node):
     for chain in vbmap:
         new_chain = [n for n in chain if n != node]
         if len(new_chain) != len(chain):
-            new_chain.append(-1)
+            new_chain.append(None)
 
         result.append(new_chain)
 

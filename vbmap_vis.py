@@ -47,7 +47,7 @@ def simulate(vbmap):
 
     def plot(vbmap, chart):
         pylab.subplot(rows, cols, chart)
-        masters = [n for n in extract_masters(vbmap) if n != -1]
+        masters = [n for n in extract_masters(vbmap) if n is not None]
 
         pylab.xticks([i + 0.5 for i in xrange(nodes_count)], nodes)
         pylab.hist(masters, bins=xrange(nodes_count + 1))
