@@ -3,34 +3,13 @@
 import math
 import sys
 
-from simplejson import load
 from itertools import chain
 from random import shuffle
 
 import pylab
 
-def load_vbmap(path):
-    with open(path) as f:
-        return load(f)
-
-def extract_masters(vbmap):
-    transmap = zip(*vbmap)
-    return transmap[0]
-
-def extract_replicas(vbmap):
-    transmap = zip(*vbmap)
-    return transmap[1:]
-
-def extract_nodes(vbmap):
-    result = set()
-    for chain in vbmap:
-        result.update(chain)
-
-    return sorted(result)
-
-def extract_tags(vbmap, nodes):
-    tags = vbmap['tags']
-    return dict((n, tags[i]) for i, n in enumerate(sorted(nodes)))
+from utils import load_vbmap, extract_masters, extract_replicas
+from utils import extract_nodes, extract_tags, promote_replicas
 
 def hist(chain, nodes):
     return [nodes[n] for n in chain]
@@ -54,17 +33,6 @@ def tag_replication_counts(vbmap, nodes, tags_list, tags):
         counts.append(tag_counts)
 
     return counts
-
-def promote_replicas(vbmap, node):
-    result = []
-    for chain in vbmap:
-        new_chain = [n for n in chain if n != node]
-        if len(new_chain) != len(chain):
-            new_chain.append(-1)
-
-        result.append(new_chain)
-
-    return result
 
 def simulate(vbmap):
     vbmap = vbmap['map']
