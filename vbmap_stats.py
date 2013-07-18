@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 import math
+import sys
 
 from simplejson import load
 from itertools import chain
@@ -99,7 +100,7 @@ def simulate(vbmap):
         chart += 1
 
 def main():
-    vbmap = load_vbmap('vbmap.json')
+    vbmap = load_vbmap(sys.argv[1])
 
     masters = extract_masters(vbmap['map'])
     replicas = extract_replicas(vbmap['map'])
