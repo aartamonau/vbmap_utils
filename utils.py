@@ -1,4 +1,5 @@
 from simplejson import load
+from random import shuffle
 
 def load_vbmap(path):
     with open(path) as f:
@@ -33,3 +34,19 @@ def promote_replicas(vbmap, node):
         result.append(new_chain)
 
     return result
+
+def simulate_failovers(vbmap):
+    vbmap = vbmap['map']
+    nodes = extract_nodes(vbmap)
+    nodes_count = len(nodes)
+
+    failures = nodes[:]
+    shuffle(failures)
+    failures = failures[1:]
+
+    vbmaps = [vbmap]
+    for node in failures:
+        vbmap = promote_replicas(vbmap, node)
+        vbmaps.append(vbmap)
+
+    return vbmaps

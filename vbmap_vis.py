@@ -4,12 +4,12 @@ import math
 import sys
 
 from itertools import chain
-from random import shuffle
 
 import pylab
 
 from utils import load_vbmap, extract_masters, extract_replicas
 from utils import extract_nodes, extract_tags, promote_replicas
+from utils import simulate_failovers
 
 def hist(chain, nodes):
     return [nodes[n] for n in chain]
@@ -35,17 +35,14 @@ def tag_replication_counts(vbmap, nodes, tags_list, tags):
     return counts
 
 def simulate(vbmap):
-    vbmap = vbmap['map']
-    nodes = extract_nodes(vbmap)
-    nodes_count = len(nodes)
-
-    failures = nodes[:]
-    shuffle(failures)
-    failures = failures[1:]
-
     pylab.figure()
 
-    charts_count = len(failures) + 1
+    nodes = extract_nodes(vbmap['map'])
+    nodes_count = len(nodes)
+
+    vbmaps = simulate_failovers(vbmap)
+
+    charts_count = len(vbmaps)
     rows = cols = int(math.ceil(math.sqrt(charts_count)))
 
     def plot(vbmap, chart):
@@ -58,14 +55,8 @@ def simulate(vbmap):
         pylab.ylabel("Number of vbuckets")
         pylab.legend()
 
-    chart = 1
-    plot(vbmap, chart)
-    chart += 1
-
-    for node in failures:
-        vbmap = promote_replicas(vbmap, node)
+    for chart, vbmap in enumerate(vbmaps, 1):
         plot(vbmap, chart)
-        chart += 1
 
 def main():
     vbmap = load_vbmap(sys.argv[1])
