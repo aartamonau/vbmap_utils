@@ -4,6 +4,7 @@ import pylab
 from os import path
 from glob import glob
 from optparse import OptionParser
+from itertools import chain
 
 from utils import load_vbmap, simulate_failovers
 
@@ -50,8 +51,9 @@ def process_dataset(name, paths):
 
     return (x, avrg, percs)
 
-def plot(name, (x, average, percentiles), output_dir):
+def plot(name, (x, average, percentiles), ymax, output_dir):
     pylab.figure()
+    pylab.ylim(ymax=ymax)
     pylab.xticks(x)
     pylab.title("Average imbalance after failovers (%s)" % name)
     pylab.xlabel("Number of failed over nodes")
@@ -76,6 +78,7 @@ def main():
     (options, args) = parser.parse_args()
 
     all_stats = {}
+    ymax = 0
 
     for datapath in args:
         if not path.isdir(datapath):
@@ -84,10 +87,13 @@ def main():
         name = path.basename(path.normpath(datapath))
         paths = glob(path.join(datapath, "*"))
 
-        all_stats[name] = process_dataset(name, paths)
+        _, average, percentiles = stats = process_dataset(name, paths)
+        all_stats[name] = stats
+
+        ymax = max(ymax, max(chain(average, *percentiles)))
 
     for name, stats in all_stats.items():
-        plot(name, stats, options.output_directory)
+        plot(name, stats, ymax + 1, options.output_directory)
 
     if options.output_directory is None:
         pylab.show()
