@@ -51,7 +51,7 @@ def process_dataset(name, paths):
 
     return (x, avrg, percs)
 
-def plot(name, (x, average, percentiles), ymax, output_dir):
+def plot(name, (x, average, percentiles), ymax):
     pylab.figure()
     pylab.ylim(ymax=ymax)
     pylab.xticks(x)
@@ -64,11 +64,6 @@ def plot(name, (x, average, percentiles), ymax, output_dir):
 
     pylab.plot(x, average, linewidth=3, label='average')
     pylab.legend(mode="expand", frameon=False, fontsize='x-small')
-
-    if output_dir is not None:
-        filepath = path.join(output_dir, "%s.png" % name)
-        pylab.savefig(filepath, dpi=250)
-        sys.stderr.write("saved %s\n" % filepath)
 
 def main():
     parser = OptionParser()
@@ -93,7 +88,12 @@ def main():
         ymax = max(ymax, max(chain(average, *percentiles)))
 
     for name, stats in all_stats.items():
-        plot(name, stats, ymax + 1, options.output_directory)
+        plot(name, stats, ymax + 1)
+
+        if options.output_directory is not None:
+            filepath = path.join(options.output_directory, "%s.png" % name)
+            pylab.savefig(filepath, dpi=250)
+            sys.stderr.write("saved %s\n" % filepath)
 
     if options.output_directory is None:
         pylab.show()
