@@ -81,7 +81,7 @@ def main():
         if not path.isdir(datapath):
             continue
 
-        name = path.basename(datapath)
+        name = path.basename(path.normpath(datapath))
         paths = glob(path.join(datapath, "*"))
 
         all_stats[name] = process_dataset(name, paths)
