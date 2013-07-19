@@ -68,10 +68,6 @@ def plot(name, (x, average, percentiles), output_dir):
         pylab.savefig(filepath, dpi=250)
         sys.stderr.write("saved %s\n" % filepath)
 
-def error(msg):
-    sys.stderr.write(msg + '\n')
-    sys.exit(1)
-
 def main():
     parser = OptionParser()
     parser.add_option("-o", "--output-directory",
@@ -83,7 +79,7 @@ def main():
 
     for datapath in args:
         if not path.isdir(datapath):
-            error("%s is not a directory" % datapath)
+            continue
 
         name = path.basename(datapath)
         paths = glob(path.join(datapath, "*"))
