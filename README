@@ -1,0 +1,38 @@
+Visualize some vbucket map properties:
+
+  $ python2 ./vbmap_vis.py data/10x2x10/star/000400
+
+Plot maximum average imbalance after a sequence of random failovers:
+
+  $  ls -1d data/* | xargs -i -P0 sh -c 'python2 ./vbmap_sim.py -o {} {}/*'
+
+where data has the following layout
+
+$ tree data
+data
+├── 10x1x10
+│   ├── chain
+│   │   ├── 000001
+│   │   ├── 000002
+│   │   ├── 000003
+│   │   ├── ...
+│   ├── star
+│   │   ├── 000001
+│   │   ├── 000002
+│   │   ├── 000003
+│   │   ├── ...
+├── 10x2x10
+│   ├── chain
+│   │   ├── 000001
+│   │   ├── 000002
+│   │   ├── 000003
+│   │   ├── ...
+│   ├── star
+│   │   ├── 000001
+│   │   ├── 000002
+│   │   ├── 000003
+│   │   ├── ...
+│   ...
+
+Each leaf file here should contain a vbucket map in json format as produced by
+'vbmap --output-format=ext-json ...'.
